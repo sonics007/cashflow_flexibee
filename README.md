@@ -151,6 +151,48 @@ launchctl load ~/Library/LaunchAgents/com.cashflow.dashboard.plist
 tail -f ~/cashflow/cashflow.log
 ```
 
+## 🪟 Inštalácia na Windows
+
+### ⚡ Automatická inštalácia
+
+**Krok 1:** Stiahnite inštalačný skript:
+- [install-windows.bat](https://raw.githubusercontent.com/sonics007/cashflow_flexibee/main/install-windows.bat) (Kliknite pravým tlačidlom → Uložiť odkaz ako...)
+
+**Krok 2:** Spustite ako Administrátor:
+- Pravé tlačidlo na `install-windows.bat` → **Spustiť ako správca**
+
+**Čo skript urobí:**
+1. ✅ Nainštaluje Python 3.11 (ak nie je nainštalovaný)
+2. ✅ Nainštaluje Git (ak nie je nainštalovaný)
+3. ✅ Klonuje repozitár z GitHubu
+4. ✅ Vytvorí virtual environment
+5. ✅ Nainštaluje Python packages
+6. ✅ Vytvorí Windows Service (NSSM)
+7. ✅ Nastaví FlexiBee (ak chcete)
+8. ✅ Spustí aplikáciu
+
+**Skript sa opýta na:**
+- 📁 Inštalačný adresár (default: `C:\cashflow`)
+- 🔌 Port (default: `8887`)
+- 🔄 FlexiBee konfigurácia (voliteľné)
+
+**Užitočné príkazy pre Windows:**
+```powershell
+# Kontrola stavu (v PowerShell ako Admin)
+nssm status CashflowDashboard
+
+# Reštart
+nssm restart CashflowDashboard
+
+# Zastavenie
+nssm stop CashflowDashboard
+
+# Spustenie
+nssm start CashflowDashboard
+```
+
+**Poznámka:** NSSM (Non-Sucking Service Manager) sa stiahne a nainštaluje automaticky.
+
 ## ⚙️ Konfigurácia FlexiBee
 
 1. Otvorte **Nastavenia → FlexiBee API**
