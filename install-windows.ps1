@@ -15,38 +15,21 @@ if (-not $isAdmin) {
     exit 1
 }
 
-# Colors
-function Write-ColorOutput($ForegroundColor) {
-    $fc = $host.UI.RawUI.ForegroundColor
-    $host.UI.RawUI.ForegroundColor = $ForegroundColor
-    if ($args) {
-        Write-Output $args
-    }
-    $host.UI.RawUI.ForegroundColor = $fc
-}
-
 Clear-Host
-Write-ColorOutput Cyan @"
-  ____          _     __ _                 
- / ___|__ _ ___| |__ / _| | _____      __  
-| |   / _` / __| '_ \| |_| |/ _ \ \ /\ / /  
-| |__| (_| \__ \ | | |  _| | (_) \ V  V /   
- \____\__,_|___/_| |_|_| |_|\___/ \_/\_/    
-                                            
-    Dashboard with FlexiBee Integration    
-        Windows Installation Script
-"@
+Write-Host "==========================================" -ForegroundColor Cyan
+Write-Host "   Cashflow Dashboard Installer" -ForegroundColor Cyan
+Write-Host "==========================================" -ForegroundColor Cyan
 
 Write-Host ""
 Write-Host "This script will automatically:" -ForegroundColor Blue
-Write-Host "  ✓ Install Python 3.11 (if not installed)"
-Write-Host "  ✓ Install Git (if not installed)"
-Write-Host "  ✓ Clone the repository from GitHub"
-Write-Host "  ✓ Setup virtual environment"
-Write-Host "  ✓ Install Python packages"
-Write-Host "  ✓ Create Windows Service (NSSM)"
-Write-Host "  ✓ Setup FlexiBee integration (optional)"
-Write-Host "  ✓ Start the application"
+Write-Host "  * Install Python 3.11 (if not installed)"
+Write-Host "  * Install Git (if not installed)"
+Write-Host "  * Clone the repository from GitHub"
+Write-Host "  * Setup virtual environment"
+Write-Host "  * Install Python packages"
+Write-Host "  * Create Windows Service (NSSM)"
+Write-Host "  * Setup FlexiBee integration (optional)"
+Write-Host "  * Start the application"
 Write-Host ""
 
 # Configuration
@@ -115,7 +98,7 @@ $pythonInstalled = $false
 try {
     $pythonVersion = python --version 2>&1
     if ($pythonVersion -match "Python 3") {
-        Write-Host "✓ Python already installed: $pythonVersion" -ForegroundColor Green
+        Write-Host "Python already installed: $pythonVersion" -ForegroundColor Green
         $pythonInstalled = $true
     }
 } catch {}
@@ -130,10 +113,10 @@ if (-not $pythonInstalled) {
     Write-Host "Installing Python 3.11..."
     Start-Process -FilePath $pythonInstaller -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1" -Wait
     
-    # Refresh PATH
+    # Refresh PATH properly
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
     
-    Write-Host "✓ Python 3.11 installed" -ForegroundColor Green
+    Write-Host "Python 3.11 installed" -ForegroundColor Green
 }
 
 # Step 2: Install Git
@@ -146,7 +129,7 @@ $gitInstalled = $false
 try {
     $gitVersion = git --version 2>&1
     if ($gitVersion -match "git version") {
-        Write-Host "✓ Git already installed: $gitVersion" -ForegroundColor Green
+        Write-Host "Git already installed: $gitVersion" -ForegroundColor Green
         $gitInstalled = $true
     }
 } catch {}
@@ -161,10 +144,10 @@ if (-not $gitInstalled) {
     Write-Host "Installing Git..."
     Start-Process -FilePath $gitInstaller -ArgumentList "/VERYSILENT /NORESTART" -Wait
     
-    # Refresh PATH
+    # Refresh PATH properly
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
     
-    Write-Host "✓ Git installed" -ForegroundColor Green
+    Write-Host "Git installed" -ForegroundColor Green
 }
 
 # Step 3: Clone Repository
@@ -174,11 +157,11 @@ Write-Host "  Step 3/7: Cloning Repository" -ForegroundColor Blue
 Write-Host "==========================================" -ForegroundColor Blue
 
 if (Test-Path $installDir) {
-    Write-Host "⚠ Directory $installDir already exists" -ForegroundColor Yellow
+    Write-Host "Directory $installDir already exists" -ForegroundColor Yellow
     $remove = Read-Host "Remove and reinstall? (y/n)"
     if ($remove -eq "y" -or $remove -eq "Y") {
         Remove-Item -Path $installDir -Recurse -Force
-        Write-Host "✓ Old installation removed" -ForegroundColor Green
+        Write-Host "Old installation removed" -ForegroundColor Green
     } else {
         Write-Host "Installation cancelled." -ForegroundColor Red
         exit 0
@@ -188,7 +171,7 @@ if (Test-Path $installDir) {
 Write-Host "Cloning from GitHub..."
 git clone https://github.com/sonics007/cashflow_flexibee.git $installDir 2>&1 | Out-Null
 
-Write-Host "✓ Repository cloned to $installDir" -ForegroundColor Green
+Write-Host "Repository cloned to $installDir" -ForegroundColor Green
 
 Set-Location $installDir
 
@@ -199,7 +182,7 @@ Write-Host "  Step 4/7: Creating Virtual Environment" -ForegroundColor Blue
 Write-Host "==========================================" -ForegroundColor Blue
 
 python -m venv venv
-Write-Host "✓ Virtual environment created" -ForegroundColor Green
+Write-Host "Virtual environment created" -ForegroundColor Green
 
 # Step 5: Install Python Packages
 Write-Host ""
@@ -210,7 +193,7 @@ Write-Host "==========================================" -ForegroundColor Blue
 & "$installDir\venv\Scripts\pip.exe" install --upgrade pip 2>&1 | Out-Null
 & "$installDir\venv\Scripts\pip.exe" install flask pandas openpyxl werkzeug cryptography schedule 2>&1 | Out-Null
 
-Write-Host "✓ Python packages installed" -ForegroundColor Green
+Write-Host "Python packages installed" -ForegroundColor Green
 
 # Step 6: Create Data Directory and FlexiBee Config
 Write-Host ""
@@ -246,10 +229,10 @@ print('FlexiBee config created')
 "@
     
     $pythonScript | & "$installDir\venv\Scripts\python.exe" -
-    Write-Host "✓ FlexiBee configured" -ForegroundColor Green
+    Write-Host "FlexiBee configured" -ForegroundColor Green
 }
 
-Write-Host "✓ Data directory ready" -ForegroundColor Green
+Write-Host "Data directory ready" -ForegroundColor Green
 
 # Step 7: Install NSSM and Create Windows Service
 Write-Host ""
@@ -283,19 +266,19 @@ $nssmExe = "$nssmDir\nssm-2.24\win64\nssm.exe"
 # Start service
 & $nssmExe start CashflowDashboard
 
-Write-Host "✓ Windows Service created and started" -ForegroundColor Green
+Write-Host "Windows Service created and started" -ForegroundColor Green
 
 # Add firewall rule
 Write-Host "Adding firewall rule for port $port..."
 New-NetFirewallRule -DisplayName "Cashflow Dashboard" -Direction Inbound -LocalPort $port -Protocol TCP -Action Allow -ErrorAction SilentlyContinue | Out-Null
-Write-Host "✓ Firewall rule added" -ForegroundColor Green
+Write-Host "Firewall rule added" -ForegroundColor Green
 
 Start-Sleep -Seconds 2
 
 # Final message
 Write-Host ""
 Write-Host "==========================================" -ForegroundColor Green
-Write-Host "  🎉 Installation Complete!" -ForegroundColor Green
+Write-Host "   Installation Complete!" -ForegroundColor Green
 Write-Host "==========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Access your Cashflow Dashboard at:" -ForegroundColor Cyan
@@ -304,7 +287,7 @@ Write-Host ""
 Write-Host "Default Login:" -ForegroundColor Yellow
 Write-Host "  Username: admin" -ForegroundColor Green
 Write-Host "  Password: admin" -ForegroundColor Green
-Write-Host "  ⚠ CHANGE PASSWORD IMMEDIATELY!" -ForegroundColor Red
+Write-Host "   CHANGE PASSWORD IMMEDIATELY!" -ForegroundColor Red
 Write-Host ""
 Write-Host "Useful Commands:" -ForegroundColor Cyan
 Write-Host "  $nssmExe status CashflowDashboard    # Check status"
@@ -315,13 +298,12 @@ Write-Host "Installation Details:" -ForegroundColor Cyan
 Write-Host "  Directory: $installDir"
 Write-Host "  Port: $port"
 Write-Host "  Service: CashflowDashboard"
-Write-Host "  NSSM: $nssmExe"
 Write-Host ""
 if ($fbHost) {
-    Write-Host "✓ FlexiBee is configured and ready!" -ForegroundColor Green
+    Write-Host "FlexiBee is configured and ready!" -ForegroundColor Green
     Write-Host ""
 }
-Write-Host "Happy cash flowing! 💰" -ForegroundColor Green
+Write-Host "Happy cash flowing!" -ForegroundColor Green
 Write-Host ""
 Write-Host "Press Enter to open the dashboard in your browser..."
 Read-Host
