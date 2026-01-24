@@ -55,27 +55,27 @@ echo ""
 
 # Ask for installation directory
 echo -e "${YELLOW}Installation Configuration:${NC}"
-read -p "Installation directory [default: /opt/cashflow]: " INSTALL_DIR
+read -p "Installation directory [default: /opt/cashflow]: " INSTALL_DIR < /dev/tty
 INSTALL_DIR=${INSTALL_DIR:-/opt/cashflow}
 
 # Ask for port
-read -p "Application port [default: 8887]: " PORT
+read -p "Application port [default: 8887]: " PORT < /dev/tty
 PORT=${PORT:-8887}
 
 echo ""
 echo -e "${YELLOW}FlexiBee Configuration (optional):${NC}"
-read -p "Configure FlexiBee now? (y/n) [default: n]: " CONFIGURE_FLEXIBEE
+read -p "Configure FlexiBee now? (y/n) [default: n]: " CONFIGURE_FLEXIBEE < /dev/tty
 CONFIGURE_FLEXIBEE=${CONFIGURE_FLEXIBEE:-n}
 
 if [[ $CONFIGURE_FLEXIBEE =~ ^[Yy]$ ]]; then
     echo ""
     echo "Enter FlexiBee connection details:"
-    read -p "  Server URL (e.g., https://demo.flexibee.eu:5434): " FB_HOST
-    read -p "  Company Code (e.g., demo_sro): " FB_COMPANY
-    read -p "  API Username: " FB_USER
-    read -sp "  API Password: " FB_PASSWORD
+    read -p "  Server URL (e.g., https://demo.flexibee.eu:5434): " FB_HOST < /dev/tty
+    read -p "  Company Code (e.g., demo_sro): " FB_COMPANY < /dev/tty
+    read -p "  API Username: " FB_USER < /dev/tty
+    read -sp "  API Password: " FB_PASSWORD < /dev/tty
     echo ""
-    read -p "  Enable automatic hourly sync? (y/n) [default: n]: " FB_ENABLED
+    read -p "  Enable automatic hourly sync? (y/n) [default: n]: " FB_ENABLED < /dev/tty
     FB_ENABLED=${FB_ENABLED:-n}
     
     if [[ $FB_ENABLED =~ ^[Yy]$ ]]; then
@@ -103,7 +103,7 @@ else
     echo "  FlexiBee: Not configured"
 fi
 echo ""
-read -p "Continue? (y/n): " -n 1 -r
+read -p "Continue? (y/n): " -n 1 -r REPLY < /dev/tty
 echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo -e "${RED}Installation cancelled.${NC}"
@@ -128,7 +128,7 @@ echo "==========================================${NC}"
 # Remove old installation if exists
 if [ -d "$INSTALL_DIR" ]; then
     echo -e "${YELLOW}⚠ Directory $INSTALL_DIR already exists${NC}"
-    read -p "Remove and reinstall? (y/n): " -n 1 -r
+    read -p "Remove and reinstall? (y/n): " -n 1 -r REPLY < /dev/tty
     echo ""
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         rm -rf "$INSTALL_DIR"
@@ -251,7 +251,7 @@ echo "==========================================${NC}"
 
 # Configure firewall if available
 if command -v ufw &> /dev/null; then
-    read -p "Open port $PORT in firewall? (y/n): " -n 1 -r
+    read -p "Open port $PORT in firewall? (y/n): " -n 1 -r REPLY < /dev/tty
     echo ""
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         ufw allow $PORT/tcp > /dev/null 2>&1
