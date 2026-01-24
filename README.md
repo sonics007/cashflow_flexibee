@@ -6,6 +6,14 @@ Moderná webová aplikácia pre sledovanie cash flow s automatickou synchronizá
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![Flask](https://img.shields.io/badge/flask-2.0+-green.svg)
 
+## 🚀 Rýchla inštalácia
+
+Vyberte si váš operačný systém:
+
+[![Linux](https://img.shields.io/badge/Linux-Debian%2FUbuntu-orange?style=for-the-badge&logo=linux)](#-rýchla-inštalácia-linux) &nbsp; [![macOS](https://img.shields.io/badge/macOS-Intel%2FApple-white?style=for-the-badge&logo=apple)](#-inštalácia-na-macos) &nbsp; [![Windows](https://img.shields.io/badge/Windows-10%2F11-blue?style=for-the-badge&logo=windows)](#-inštalácia-na-windows) &nbsp; [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker)](#-docker-voliteľné)
+
+---
+
 ## ✨ Hlavné funkcie
 
 ### 📊 Cash Flow Dashboard
