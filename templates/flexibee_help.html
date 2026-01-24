@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexiBee Integrace - Nápověda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h3 {
+            color: #764ba2;
+            margin: 20px 0 10px 0;
+            font-size: 1.3em;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 25px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #667eea;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #667eea;
+        }
+
+        .timeline-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .timeline-item ul {
+            margin-left: 20px;
+        }
+
+        .timeline-item li {
+            margin: 5px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .badge-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            color: #0c5460;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-left: 4px solid #155724;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-left: 4px solid #856404;
+            color: #856404;
+        }
+
+        .steps {
+            counter-reset: step-counter;
+            list-style: none;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            margin: 15px 0;
+            padding-left: 50px;
+            position: relative;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-top: 20px;
+            transition: transform 0.3s;
+        }
+
+        .back-button:hover {
+            transform: scale(1.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 FlexiBee Integrace</h1>
+            <p>Automatická synchronizace faktur mezi FlexiBee a Cashflow aplikací</p>
+        </div>
+
+        <div class="content">
+            <!-- Co je FlexiBee -->
+            <div class="section">
+                <h2>📘 Co je FlexiBee integrace?</h2>
+                <p>
+                    FlexiBee integrace automaticky synchronizuje vaše faktury z účetního systému ABRA Flexi (FlexiBee)
+                    do Cashflow aplikace. Díky tomu máte vždy aktuální přehled o příjmech a výdajích bez nutnosti
+                    ručního zadávání.
+                </p>
+
+                <div class="feature-grid" style="margin-top: 30px;">
+                    <div class="feature-card">
+                        <div class="icon">📥</div>
+                        <h4>Vydané faktúry</h4>
+                        <p>Automaticky importuje vaše vydané faktury jako příjmy</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📤</div>
+                        <h4>Přijaté faktúry</h4>
+                        <p>Automaticky importuje přijaté faktury jako výdaje</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔄</div>
+                        <h4>Automatická synchronizace</h4>
+                        <p>Každou hodinu se data automaticky aktualizují</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔐</div>
+                        <h4>Bezpečné připojení</h4>
+                        <p>Šifrované heslo a zabezpečené HTTPS spojení</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jak to funguje -->
+            <div class="section">
+                <h2>⚙️ Jak FlexiBee integrace funguje?</h2>
+
+                <h3>1. Připojení k FlexiBee serveru</h3>
+                <p>Aplikace se připojuje k vašemu FlexiBee serveru pomocí REST API s těmito údaji:</p>
+                <ul style="margin-left: 40px; margin-top: 10px;">
+                    <li><strong>Host:</strong> Adresa vašeho FlexiBee serveru (např. https://demo.flexibee.eu:5434)</li>
+                    <li><strong>Společnost:</strong> Kód vaší společnosti v FlexiBee</li>
+                    <li><strong>Uživatel:</strong> Přihlašovací jméno</li>
+                    <li><strong>Heslo:</strong> Přihlašovací heslo (automaticky šifrované)</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">2. Synchronizační proces</h3>
+                <ol class="steps">
+                    <li>
+                        <strong>Načtení konfigurace</strong><br>
+                        Aplikace načte vaše přihlašovací údaje (heslo je automaticky dešifrováno)
+                    </li>
+                    <li>
+                        <strong>Připojení k FlexiBee</strong><br>
+                        Navázání zabezpečeného HTTPS spojení s FlexiBee serverem
+                    </li>
+                    <li>
+                        <strong>Stažení vydaných faktur</strong><br>
+                        Načtení všech vydaných faktur (příjmy) změněných od poslední synchronizace
+                    </li>
+                    <li>
+                        <strong>Stažení přijatých faktur</strong><br>
+                        Načtení všech přijatých faktur (výdaje) změněných od poslední synchronizace
+                    </li>
+                    <li>
+                        <strong>Detekce duplicit</strong><br>
+                        Kontrola, zda faktura již není v databázi (podle variabilního symbolu)
+                    </li>
+                    <li>
+                        <strong>Uložení do databáze</strong><br>
+                        Nové faktury se přidají, existující se aktualizují
+                    </li>
+                    <li>
+                        <strong>Aktualizace časové značky</strong><br>
+                        Uložení času poslední synchronizace pro příští běh
+                    </li>
+                </ol>
+
+                <div class="alert alert-info">
+                    <strong>💡 Chytrá synchronizace:</strong> Při první synchronizaci se stáhnou faktury za posledních
+                    365 dní.
+                    Při dalších synchronizacích se stahují pouze změny od poslední synchronizace.
+                </div>
+            </div>
+
+            <!-- Mapování polí -->
+            <div class="section">
+                <h2>🔄 Mapování dat z FlexiBee</h2>
+
+                <h3>Vydané faktury (Příjmy)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>FlexiBee pole</th>
+                            <th>Cashflow pole</th>
+                            <th>Popis</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>code</code></td>
+                            <td>Zdroj</td>
+                            <td>Číslo faktury (uloženo jako flexibee:CODE)</td>
+                        </tr>
+                        <tr>
+                            <td><code>datSplat</code></td>
+                            <td>Datum</td>
+                            <td>Datum splatnosti faktury</td>
+                        </tr>
+                        <tr>
+                            <td><code>sumCelkem</code></td>
+                            <td>Částka</td>
+                            <td>Celková částka (kladná hodnota)</td>
+                        </tr>
+                        <tr>
+                            <td><code>firma.showAs</code></td>
+                            <td>Zákazník</td>
+                            <td>Název zákazníka</td>
+                        </tr>
+                        <tr>
+                            <td><code>varSym</code></td>
+                            <td>Var. symbol</td>
+                            <td>Variabilní symbol faktury</td>
+                        </tr>
+                        <tr>
+                            <td><code>popis</code></td>
+                            <td>Popis</td>
+                            <td>Popis faktury</td>
+                        </tr>
+                        <tr>
+                            <td><code>uhrazeno</code></td>
+                            <td>Stav platby</td>
+                            <td>Zaplaceno / Nezaplaceno</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="margin-top: 30px;">Přijaté faktury (Výdaje)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>FlexiBee pole</th>
+                            <th>Cashflow pole</th>
+                            <th>Popis</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>code</code></td>
+                            <td>Zdroj</td>
+                            <td>Číslo faktury (uloženo jako flexibee:CODE)</td>
+                        </tr>
+                        <tr>
+                            <td><code>datSplat</code></td>
+                            <td>Datum</td>
+                            <td>Datum splatnosti faktury</td>
+                        </tr>
+                        <tr>
+                            <td><code>sumCelkem</code></td>
+                            <td>Částka</td>
+                            <td>Celková částka (záporná hodnota)</td>
+                        </tr>
+                        <tr>
+                            <td><code>firma.showAs</code></td>
+                            <td>Dodavatel</td>
+                            <td>Název dodavatele</td>
+                        </tr>
+                        <tr>
+                            <td><code>varSym</code></td>
+                            <td>Var. symbol</td>
+                            <td>Variabilní symbol faktury</td>
+                        </tr>
+                        <tr>
+                            <td><code>popis</code></td>
+                            <td>Popis</td>
+                            <td>Popis faktury</td>
+                        </tr>
+                        <tr>
+                            <td><code>uhrazeno</code></td>
+                            <td>Stav platby</td>
+                            <td>Zaplaceno / Nezaplaceno</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Nové funkce -->
+            <div class="section">
+                <h2>✨ Nové funkce (Verze 2.0)</h2>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="icon">🔐</div>
+                        <h4>Šifrování hesel</h4>
+                        <span class="badge badge-success">AKTIVNÍ</span>
+                        <p>Vaše heslo je automaticky šifrováno pomocí AES algoritmu a bezpečně uloženo.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔄</div>
+                        <h4>Retry mechanismus</h4>
+                        <span class="badge badge-success">AKTIVNÍ</span>
+                        <p>Při výpadku spojení se automaticky provede až 3 pokusy o připojení s exponenciálním
+                            zpožděním.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📄</div>
+                        <h4>Stránkování</h4>
+                        <span class="badge badge-success">AKTIVNÍ</span>
+                        <p>Podpora pro velké datasety (10000+ faktur) bez timeoutu. Data se stahují po 100 záznamech.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔔</div>
+                        <h4>Webhooks</h4>
+                        <span class="badge badge-warning">PŘIPRAVENO</span>
+                        <p>Real-time synchronizace pomocí webhooků (vyžaduje konfiguraci FlexiBee serveru).</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-success" style="margin-top: 30px;">
+                    <strong>✅ Všechny funkce testovány:</strong> Všechny nové funkce prošly automatickými testy a jsou
+                    připraveny k použití.
+                </div>
+            </div>
+
+            <!-- Plánovaná vylepšení -->
+            <div class="section">
+                <h2>🚀 Plánovaná vylepšení</h2>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <h4>📅 Krátkodobá vylepšení (1-2 týdny)</h4>
+                        <span class="badge badge-info">PLÁNOVÁNO</span>
+                        <ul>
+                            <li><strong>Changes API:</strong> Efektivnější sledování změn pomocí FlexiBee Changes API
+                            </li>
+                            <li><strong>Progress bar:</strong> Vizuální indikátor průběhu synchronizace v uživatelském
+                                rozhraní</li>
+                            <li><strong>Email notifikace:</strong> Automatické upozornění při chybách synchronizace</li>
+                            <li><strong>Detailní logy:</strong> Rozšířené logování pro lepší diagnostiku problémů</li>
+                            <li><strong>Konfigurovatelný interval:</strong> Možnost nastavit frekvenci automatické
+                                synchronizace</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item">
+                        <h4>📅 Střednědobá vylepšení (1-2 měsíce)</h4>
+                        <span class="badge badge-info">PLÁNOVÁNO</span>
+                        <ul>
+                            <li><strong>Obousměrná synchronizace:</strong> Možnost vytvářet a upravovat faktury v
+                                FlexiBee přímo z Cashflow</li>
+                            <li><strong>Multi-company podpora:</strong> Správa více společností v jedné aplikaci</li>
+                            <li><strong>Dashboard pro FlexiBee:</strong> Přehledné statistiky synchronizace, historie
+                                změn a manuální řešení konfliktů</li>
+                            <li><strong>Bankovní transakce:</strong> Automatický import bankovních výpisů z FlexiBee
+                            </li>
+                            <li><strong>Pokladní transakce:</strong> Import hotovostních plateb z FlexiBee pokladny</li>
+                            <li><strong>Párování plateb:</strong> Automatické párování plateb s fakturami</li>
+                            <li><strong>Webhook aktivace:</strong> Plná podpora real-time synchronizace pomocí webhooků
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item">
+                        <h4>📅 Dlouhodobá vylepšení (3+ měsíce)</h4>
+                        <span class="badge badge-info">PLÁNOVÁNO</span>
+                        <ul>
+                            <li><strong>Offline režim:</strong> Lokální cache dat s automatickou synchronizací při
+                                obnovení připojení</li>
+                            <li><strong>AI predikce cashflow:</strong> Inteligentní predikce budoucího cashflow na
+                                základě historických dat</li>
+                            <li><strong>Detekce anomálií:</strong> Automatická detekce neobvyklých plateb a upozornění
+                            </li>
+                            <li><strong>Mobilní aplikace:</strong> Nativní aplikace pro Android a iOS s offline podporou
+                            </li>
+                            <li><strong>API pro třetí strany:</strong> Veřejné API pro integraci s dalšími systémy</li>
+                            <li><strong>Pokročilé reporty:</strong> Grafické reporty, analýzy trendů, srovnání období
+                            </li>
+                            <li><strong>Multi-měnová podpora:</strong> Automatické přepočty kurzů a správa více měn</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Výkonnostní charakteristiky -->
+            <div class="section">
+                <h2>📊 Výkonnostní charakteristiky</h2>
+
+                <h3>Synchronizační čas (odhad)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Počet faktur</th>
+                            <th>Verze 1.0</th>
+                            <th>Verze 2.0</th>
+                            <th>Zlepšení</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>100 faktur</td>
+                            <td>~2-5 sekund</td>
+                            <td>~2 sekundy</td>
+                            <td>✅ Rychlejší</td>
+                        </tr>
+                        <tr>
+                            <td>1000 faktur</td>
+                            <td>~20-30 sekund</td>
+                            <td>~25 sekund</td>
+                            <td>✅ Stabilnější</td>
+                        </tr>
+                        <tr>
+                            <td>10000 faktur</td>
+                            <td>❌ Timeout/Crash</td>
+                            <td>~3-5 minut</td>
+                            <td>✅ Funguje!</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="margin-top: 30px;">Bezpečnostní vylepšení</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Funkce</th>
+                            <th>Verze 1.0</th>
+                            <th>Verze 2.0</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Uložení hesla</td>
+                            <td>❌ Plain text</td>
+                            <td>✅ AES šifrování</td>
+                        </tr>
+                        <tr>
+                            <td>Retry při výpadku</td>
+                            <td>❌ Ne</td>
+                            <td>✅ 3 pokusy</td>
+                        </tr>
+                        <tr>
+                            <td>Velké datasety</td>
+                            <td>❌ Timeout</td>
+                            <td>✅ Stránkování</td>
+                        </tr>
+                        <tr>
+                            <td>Real-time sync</td>
+                            <td>❌ Ne</td>
+                            <td>⚠️ Připraveno</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Řešení problémů -->
+            <div class="section">
+                <h2>🔧 Řešení častých problémů</h2>
+
+                <h3>❌ Chyba: "Připojení selhalo"</h3>
+                <div class="alert alert-warning">
+                    <strong>Možné příčiny:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Nesprávná adresa FlexiBee serveru</li>
+                        <li>Špatné přihlašovací údaje</li>
+                        <li>FlexiBee server není dostupný</li>
+                        <li>Firewall blokuje připojení</li>
+                    </ul>
+                    <strong>Řešení:</strong>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>Zkontrolujte URL adresu (musí začínat https://)</li>
+                        <li>Ověřte uživatelské jméno a heslo</li>
+                        <li>Použijte tlačítko "Test připojení"</li>
+                        <li>Kontaktujte administrátora FlexiBee serveru</li>
+                    </ol>
+                </div>
+
+                <h3>❌ Chyba: "Žádná data synchronizována"</h3>
+                <div class="alert alert-warning">
+                    <strong>Možné příčiny:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Žádné nové faktury od poslední synchronizace</li>
+                        <li>Nesprávný časový filtr</li>
+                    </ul>
+                    <strong>Řešení:</strong>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>Zkontrolujte, zda máte v FlexiBee nové faktury</li>
+                        <li>Zkuste resetovat čas poslední synchronizace</li>
+                        <li>Použijte manuální synchronizaci</li>
+                    </ol>
+                </div>
+
+                <h3>❌ Chyba: "Timeout"</h3>
+                <div class="alert alert-warning">
+                    <strong>Řešení:</strong>
+                    <p>Verze 2.0 automaticky řeší timeouty pomocí:</p>
+                    <ul style="margin-left: 20px;">
+                        <li>Retry mechanismus (3 pokusy)</li>
+                        <li>Stránkování (po 100 záznamech)</li>
+                        <li>Delší timeout (30 sekund)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Kontakt a podpora -->
+            <div class="section">
+                <h2>📞 Podpora a dokumentace</h2>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="icon">📖</div>
+                        <h4>Quick Start Guide</h4>
+                        <p>Rychlý průvodce nastavením a prvním použitím</p>
+                        <code>FLEXIBEE_QUICKSTART.md</code>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📚</div>
+                        <h4>Detailní dokumentace</h4>
+                        <p>Kompletní technická dokumentace všech funkcí</p>
+                        <code>FLEXIBEE_ENHANCEMENTS.md</code>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔍</div>
+                        <h4>Analýza implementace</h4>
+                        <p>Podrobná analýza architektury a API</p>
+                        <code>FLEXIBEE_ANALYSIS.md</code>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🏗️</div>
+                        <h4>Architektura</h4>
+                        <p>Vizuální diagramy a datové toky</p>
+                        <code>ARCHITECTURE_DIAGRAMS.md</code>
+                    </div>
+                </div>
+
+                <div class="alert alert-info" style="margin-top: 30px;">
+                    <strong>💡 Tip:</strong> Všechny dokumentační soubory najdete v hlavním adresáři aplikace Cashflow.
+                </div>
+            </div>
+
+            <!-- Zpět -->
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="/" class="back-button">← Zpět do aplikace</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

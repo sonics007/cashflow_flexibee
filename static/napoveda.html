@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cashflow Dashboard - Nápověda</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1e1e1e;
+            color: #e0e0e0;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            color: #69f0ae;
+            border-bottom: 3px solid #69f0ae;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #69f0ae;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        h3 {
+            color: #ccc;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 4px solid #69f0ae;
+        }
+
+        .screenshot {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        ul {
+            margin-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        strong {
+            color: #fff;
+        }
+
+        .highlight {
+            background: rgba(105, 240, 174, 0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #69f0ae;
+        }
+
+        .warning {
+            background: rgba(255, 82, 82, 0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #ff5252;
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>❓ Cashflow Dashboard - Kompletní nápověda</h1>
+
+    <div class="section">
+        <h2>📊 Hlavní stránka</h2>
+        <p>Hlavní stránka zobrazuje <strong>pouze přijaté faktury (výdaje)</strong> - dny, kdy máte splatné platby. To
+            vám umožňuje rychle vidět, kdy potřebujete mít dostatek peněz na účtu.</p>
+
+        <img src="C:/Users/user/.gemini/antigravity/brain/68a00273-adc1-4252-94a9-06bcbac6adc4/main_dashboard_view_1768835450307.png"
+            alt="Hlavní stránka" class="screenshot">
+
+        <h3>Funkce:</h3>
+        <ul>
+            <li><strong>Kliknutím na řádek</strong> zobrazíte detail dne včetně:
+                <ul>
+                    <li>Příjmy a výdaje v ten den</li>
+                    <li>Denní změnu</li>
+                    <li>Kumulovaný zůstatek</li>
+                    <li><span class="highlight">Seznam faktur</span> (VS, název firmy, částka)</li>
+                </ul>
+            </li>
+            <li><span class="warning">Červený zůstatek</span> = dluh (nemáte dostatek peněz)</li>
+            <li><span class="highlight">Zelený zůstatek</span> = přebytek (máte dostatek peněz)</li>
+            <li><strong>Aktuální stav</strong> v pravém horním rohu ukazuje celkový zůstatek</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>🔘 Tlačítka v hlavičce</h2>
+        <ul>
+            <li><strong>📊 Přehled</strong> - Kompletní seznam všech transakcí (příjmy + výdaje)</li>
+            <li><strong>📥 Přijaté faktury</strong> - Detailní seznam výdajů s možností úpravy a přidání</li>
+            <li><strong>📤 Vystavené faktury</strong> - Detailní seznam příjmů s možností přidání</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>📥 Přijaté faktury (Výdaje)</h2>
+        <p>Tento modal zobrazuje všechny přijaté faktury (výdaje). Zde můžete spravovat vaše závazky.</p>
+
+        <img src="C:/Users/user/.gemini/antigravity/brain/68a00273-adc1-4252-94a9-06bcbac6adc4/invoice_detail_modal_1768835519313.png"
+            alt="Přijaté faktury" class="screenshot">
+
+        <h3>Funkce:</h3>
+        <ul>
+            <li><strong>➕ Přidat výdaj</strong> - Manuální přidání nové přijaté faktury (pro testování nebo manuální
+                záznam)</li>
+            <li><strong>✏️ Upravit</strong> - Změna <span class="highlight">data splatnosti</span>
+                <ul>
+                    <li>Použijte to na přesunutí faktury na den, kdy budete mít dostatek peněz</li>
+                    <li>Například: Fakturu splatnou 15.1. můžete přesunout na 25.1., pokud tehdy dostanete příjem</li>
+                </ul>
+            </li>
+            <li><strong>🗑️ Smazat</strong> - Odstranění faktury z databáze</li>
+        </ul>
+
+        <h3>Důležité:</h3>
+        <ul>
+            <li>Výdaje se <strong>automaticky započítávají v den splatnosti</strong></li>
+            <li>Stav "zaplaceno/nezaplaceno" již <strong>není potřeba</strong></li>
+            <li>Faktury označené jako <code>archiv</code> se ignorují v přepočtu</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>➕ Přidání nového výdaje</h2>
+        <p>Formulář pro manuální přidání přijaté faktury.</p>
+
+        <img src="C:/Users/user/.gemini/antigravity/brain/68a00273-adc1-4252-94a9-06bcbac6adc4/add_expense_form_1768835596586.png"
+            alt="Přidání výdaje" class="screenshot">
+
+        <h3>Pole formuláře:</h3>
+        <ul>
+            <li><strong>Datum splatnosti</strong> * - Kdy má být faktura zaplacena</li>
+            <li><strong>Variabilní symbol</strong> - VS faktury (volitelné)</li>
+            <li><strong>Dodavatel</strong> * - Název firmy, od které je faktura</li>
+            <li><strong>Částka (Kč)</strong> * - Výše faktury (zadávejte kladné číslo, systém ho automaticky uloží jako
+                záporný)</li>
+            <li><strong>Popis</strong> - Poznámka k faktuře (volitelné)</li>
+        </ul>
+        <p><small>* = povinné pole</small></p>
+    </div>
+
+    <div class="section">
+        <h2>📤 Vystavené faktury (Příjmy)</h2>
+        <p>Tento modal zobrazuje všechny vystavené faktury a jiné příjmy.</p>
+
+        <h3>Funkce:</h3>
+        <ul>
+            <li><strong>➕ Přidat příjem</strong> - Výběr typu:
+                <ul>
+                    <li><strong>📄 Vystavená faktura</strong> - Faktura, kterou jste vystavili zákazníkovi</li>
+                    <li><strong>💰 Vklad</strong> - Vlastní vklad peněz</li>
+                    <li><strong>✏️ Jiné</strong> - Jiný typ příjmu</li>
+                </ul>
+            </li>
+            <li><strong>🗑️ Smazat</strong> - Odstranění příjmu</li>
+        </ul>
+
+        <h3>Důležité:</h3>
+        <ul>
+            <li>Příjmy se <strong>automaticky započítávají v den splatnosti</strong></li>
+            <li>Stav "zaplaceno/nezaplaceno" již <strong>není potřeba</strong></li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>💡 Logika výpočtu zůstatku</h2>
+        <p>Systém počítá zůstatek následovně:</p>
+
+        <h3>Základní vzorec:</h3>
+        <code>Kumulovaný stav = Počáteční stav + Příjmy - Výdaje</code>
+
+        <h3>Pravidla:</h3>
+        <ul>
+            <li><strong>Příjmy</strong> - Započítávají se v den splatnosti (ne v den zaplacení)</li>
+            <li><strong>Výdaje</strong> - Započítávají se v den splatnosti (ne v den zaplacení)</li>
+            <li><strong>Archiv</strong> - Transakce označené jako <code>archiv</code> se <span
+                    class="warning">ignorují</span></li>
+            <li><strong>Kumulovaný stav</strong> - Běžný zůstatek od začátku (Počáteční stav + všechny transakce)</li>
+        </ul>
+
+        <h3>Příklad:</h3>
+        <ul>
+            <li>Počáteční stav: 100 000 Kč</li>
+            <li>15.1. - Příjem (faktura splatná): +50 000 Kč → Zůstatek: 150 000 Kč</li>
+            <li>20.1. - Výdaj (faktura splatná): -30 000 Kč → Zůstatek: 120 000 Kč</li>
+            <li>25.1. - Výdaj (faktura splatná): -40 000 Kč → Zůstatek: 80 000 Kč</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>📁 Import faktur</h2>
+        <p>V <strong>Nastavení → Import faktur</strong> můžete nahrát Excel soubory (.xlsx):</p>
+
+        <h3>Přijaté faktury (Výdaje):</h3>
+        <ul>
+            <li>Systém automaticky kontroluje <strong>Variabilní Symboly (VS)</strong></li>
+            <li>Duplicitní faktury (stejný VS) se automaticky přeskočí</li>
+            <li>Částky se uloží jako záporné</li>
+        </ul>
+
+        <h3>Vystavené faktury (Příjmy):</h3>
+        <ul>
+            <li>Faktury, které jste vystavili zákazníkům</li>
+            <li>Částky se uloží jako kladné</li>
+        </ul>
+
+        <h3>Formát Excel souboru:</h3>
+        <p>Systém očekává sloupce: Datum, VS, Firma, Částka, Stav, Popis</p>
+    </div>
+
+    <div class="section">
+        <h2>⚙️ Nastavení</h2>
+
+        <h3>Počáteční zůstatek:</h3>
+        <ul>
+            <li>Nastavte výchozí částku na účtu</li>
+            <li>Od této částky se počítá kumulovaný stav</li>
+        </ul>
+
+        <h3>Správa DB (Zálohy):</h3>
+        <ul>
+            <li><span class="warning">Velmi důležité!</span> Pravidelně vytvářejte zálohy</li>
+            <li>Doporučujeme zálohovat před velkými importy</li>
+        </ul>
+
+        <h3>Kontrola souborů:</h3>
+        <ul>
+            <li>Seznam všech nahraných Excel souborů</li>
+            <li>Možnost smazání (pozor: smaže i transakce z daného souboru)</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>💡 Tipy a triky</h2>
+        <ul>
+            <li><strong>Plánování plateb:</strong> Použijte úpravu data splatnosti na přesunutí faktur na dny, kdy
+                budete mít dostatek peněz</li>
+            <li><strong>Sledování cashflow:</strong> Hlavní stránka vám ukáže, kdy budete v mínusu</li>
+            <li><strong>Testování:</strong> Použijte "Přidat výdaj" a "Přidat příjem" na simulaci různých scénářů</li>
+            <li><strong>Archiv:</strong> Staré nebo zrušené faktury označte jako "archiv" - nebudou se počítat</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>❓ Často kladené otázky</h2>
+
+        <h3>Proč se faktura nezobrazuje na hlavní stránce?</h3>
+        <p>Hlavní stránka zobrazuje pouze dny s výdaji. Pokud máte jen příjmy, použijte tlačítko "Přehled".</p>
+
+        <h3>Jak změním datum splatnosti faktury?</h3>
+        <p>Klikněte na "Přijaté faktury" → "✏️ Upravit" → Změňte datum → "💾 Uložit"</p>
+
+        <h3>Proč je zůstatek červený?</h3>
+        <p>Červený zůstatek znamená, že v daný den nemáte dostatek peněz na pokrytí výdajů. Přesuňte faktury na pozdější
+            datum nebo přidejte příjem.</p>
+
+        <h3>Co znamená "archiv"?</h3>
+        <p>Transakce označené jako "archiv" se ignorují v přepočtu zůstatku. Použijte to pro zrušené nebo neplatné
+            faktury.</p>
+    </div>
+
+    <footer
+        style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); color: #777;">
+        <p>Cashflow Dashboard © 2025 | Verze 2.0</p>
+    </footer>
+</body>
+
+</html>

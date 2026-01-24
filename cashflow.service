@@ -1,0 +1,20 @@
+[Unit]
+Description=Cashflow Dashboard Web App
+After=network.target
+
+[Service]
+# Změňte 'user' na vašeho uživatele (např. ubuntu, root, pi)
+User=USER_PLACEHOLDER
+Group=GROUP_PLACEHOLDER
+
+# Cesta k aplikaci - UPRAVTE DLE REALITY
+WorkingDirectory=/path/to/cashflow_app
+Environment="PATH=/path/to/cashflow_app/venv/bin"
+ExecStart=/path/to/cashflow_app/venv/bin/python3 app.py
+
+# Restart při pádu
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

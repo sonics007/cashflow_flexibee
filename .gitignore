@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Database
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Data directory (contains user data, configs, backups)
+data/
+!data/.gitkeep
+
+# FlexiBee config (contains encrypted passwords)
+flexibee_config.json
+.flexibee_key
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Backups
+backups/
+*.bak
+
+# Temporary files
+tmp/
+temp/
+*.tmp
