@@ -61,11 +61,50 @@ fi
 echo -e "${GREEN}✓ Installation directory: $INSTALL_DIR${NC}"
 echo ""
 
+# Ask for FlexiBee configuration
+echo -e "${YELLOW}FlexiBee Configuration (optional):${NC}"
+echo "Do you want to configure FlexiBee integration now?"
+read -p "(y/n) [default: n]: " CONFIGURE_FLEXIBEE
+CONFIGURE_FLEXIBEE=${CONFIGURE_FLEXIBEE:-n}
+
+if [[ $CONFIGURE_FLEXIBEE =~ ^[Yy]$ ]]; then
+    echo ""
+    echo "Enter FlexiBee connection details:"
+    read -p "  FlexiBee Server URL (e.g., https://demo.flexibee.eu:5434): " FB_HOST
+    read -p "  Company Code (e.g., demo_sro): " FB_COMPANY
+    read -p "  API Username: " FB_USER
+    read -sp "  API Password: " FB_PASSWORD
+    echo ""
+    read -p "  Enable automatic sync every hour? (y/n) [default: n]: " FB_ENABLED
+    FB_ENABLED=${FB_ENABLED:-n}
+    
+    if [[ $FB_ENABLED =~ ^[Yy]$ ]]; then
+        FB_ENABLED_BOOL="true"
+    else
+        FB_ENABLED_BOOL="false"
+    fi
+    
+    echo -e "${GREEN}✓ FlexiBee configuration saved${NC}"
+else
+    FB_HOST=""
+    FB_COMPANY=""
+    FB_USER=""
+    FB_PASSWORD=""
+    FB_ENABLED_BOOL="false"
+    echo -e "${YELLOW}⚠ FlexiBee configuration skipped (can be configured later in Settings)${NC}"
+fi
+echo ""
+
 # Confirm
 echo -e "${YELLOW}Summary:${NC}"
 echo "  Port: $PORT"
 echo "  Directory: $INSTALL_DIR"
 echo "  User: $ACTUAL_USER"
+if [[ ! -z "$FB_HOST" ]]; then
+    echo "  FlexiBee: Enabled ($FB_HOST)"
+else
+    echo "  FlexiBee: Not configured"
+fi
 echo ""
 read -p "Continue with installation? (y/n): " -n 1 -r
 echo ""
@@ -132,6 +171,37 @@ if [ ! -d "data" ]; then
     echo -e "${GREEN}✓ Data directory created${NC}"
 else
     echo -e "${YELLOW}⚠ Data directory already exists${NC}"
+fi
+
+# Create FlexiBee config if provided
+if [[ ! -z "$FB_HOST" ]]; then
+    echo "Creating FlexiBee configuration..."
+    
+    # Use Python to encrypt password and create config
+    sudo -u $ACTUAL_USER bash -c "cd '$INSTALL_DIR' && source venv/bin/activate && python3 << 'PYTHON_EOF'
+import json
+import os
+from flexibee_sync import PasswordEncryption
+
+config = {
+    'host': '$FB_HOST',
+    'company': '$FB_COMPANY',
+    'user': '$FB_USER',
+    'password': PasswordEncryption.encrypt('$FB_PASSWORD'),
+    'password_encrypted': True,
+    'enabled': $FB_ENABLED_BOOL,
+    'last_sync': ''
+}
+
+os.makedirs('data', exist_ok=True)
+with open('data/flexibee_config.json', 'w') as f:
+    json.dump(config, f, indent=4)
+
+print('FlexiBee config created')
+PYTHON_EOF
+"
+    
+    echo -e "${GREEN}✓ FlexiBee configuration file created${NC}"
 fi
 echo ""
 
