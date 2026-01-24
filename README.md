@@ -113,6 +113,44 @@ Aplikácia bude dostupná na `http://localhost:8887`
 docker-compose up -d
 ```
 
+## 🍎 Inštalácia na macOS
+
+### ⚡ One-Command Install
+
+```bash
+curl -sSL https://raw.githubusercontent.com/sonics007/cashflow_flexibee/main/install-macos.sh | bash
+```
+
+**Čo skript urobí:**
+1. ✅ Nainštaluje Homebrew (ak nie je nainštalovaný)
+2. ✅ Nainštaluje Python 3.8+ a git
+3. ✅ Klonuje repozitár z GitHubu
+4. ✅ Vytvorí virtual environment
+5. ✅ Nainštaluje Python packages
+6. ✅ Nakonfiguruje LaunchAgent (auto-start)
+7. ✅ Nastaví FlexiBee (ak chcete)
+8. ✅ Spustí aplikáciu
+
+**Skript sa opýta na:**
+- 📁 Inštalačný adresár (default: `~/cashflow`)
+- 🔌 Port (default: `8887`)
+- 🔄 FlexiBee konfigurácia (voliteľné)
+
+**Užitočné príkazy pre macOS:**
+```bash
+# Kontrola stavu
+launchctl list | grep cashflow
+
+# Zastavenie
+launchctl unload ~/Library/LaunchAgents/com.cashflow.dashboard.plist
+
+# Spustenie
+launchctl load ~/Library/LaunchAgents/com.cashflow.dashboard.plist
+
+# Zobrazenie logov
+tail -f ~/cashflow/cashflow.log
+```
+
 ## ⚙️ Konfigurácia FlexiBee
 
 1. Otvorte **Nastavenia → FlexiBee API**
