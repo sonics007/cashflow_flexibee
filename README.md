@@ -201,6 +201,16 @@ nssm start CashflowDashboard
 
 **Poznámka:** NSSM (Non-Sucking Service Manager) sa stiahne a nainštaluje automaticky.
 
+### 📦 Vytvorenie EXE inštalátora (Voliteľné)
+
+Ak chcete mať všetko v jednom `CashflowSetup.exe` súbore:
+
+1. Stiahnite a nainštalujte **[Inno Setup](https://jrsoftware.org/isdl.php)** (zadarmo).
+2. Stiahnite si súbor [`setup.iss`](https://raw.githubusercontent.com/sonics007/cashflow_flexibee/main/setup.iss).
+3. Uistite sa, že v rovnakej zložke máte aj `install-windows.bat` a `install-windows.ps1`.
+4. Otvorte `setup.iss` a kliknite na tlačidlo **Compile**.
+5. Vytvorí sa priečinok `Output` s vaším súborom `CashflowSetup.exe`.
+
 ## ⚙️ Konfigurácia FlexiBee
 
 1. Otvorte **Nastavenia → FlexiBee API**
