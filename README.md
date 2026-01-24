@@ -44,6 +44,40 @@ Moderná webová aplikácia pre sledovanie cash flow s automatickou synchronizá
 
 ## 🚀 Rýchla inštalácia (Linux)
 
+### ⚡ One-Command Install (Odporúčané)
+
+Najrýchlejší spôsob - jeden príkaz urobí všetko:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/sonics007/cashflow_flexibee/main/quick-install.sh | sudo bash
+```
+
+Alebo s `wget`:
+
+```bash
+wget -qO- https://raw.githubusercontent.com/sonics007/cashflow_flexibee/main/quick-install.sh | sudo bash
+```
+
+**Čo skript urobí:**
+1. ✅ Nainštaluje všetky dependencies (Python, git, SQLite)
+2. ✅ Klonuje repozitár z GitHubu
+3. ✅ Vytvorí virtual environment
+4. ✅ Nainštaluje Python packages
+5. ✅ Nakonfiguruje systemd service
+6. ✅ Nastaví FlexiBee (ak chcete)
+7. ✅ Spustí aplikáciu
+
+**Skript sa opýta na:**
+- 📁 Inštalačný adresár (default: `/opt/cashflow`)
+- 🔌 Port (default: `8887`)
+- 🔄 FlexiBee konfigurácia (voliteľné)
+
+---
+
+### 📦 Manuálna inštalácia
+
+Ak preferujete manuálnu inštaláciu:
+
 ### Predpoklady
 - Python 3.8+
 - pip
