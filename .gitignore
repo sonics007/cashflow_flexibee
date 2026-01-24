@@ -49,3 +49,33 @@ backups/
 tmp/
 temp/
 *.tmp
+
+# Test and debug files
+test_*.py
+*_test.py
+debug_*.py
+*_debug.py
+simple_test.py
+check_*.py
+
+# Old/obsolete files
+*_old.py
+*.old
+app_old.py
+
+# FlexiBee debug scripts
+find_company_code.py
+find_flexibee_companies.py
+flexibee_login.py
+get_companies.py
+test_connection.py
+test_flexibee_config.py
+test_new_endpoint.py
+
+# Migration scripts (already migrated)
+convert_to_sqlite.py
+migrate_to_db.py
+
+# Utility scripts (optional)
+restore_user.py
+init_db_quick.py
