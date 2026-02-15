@@ -253,6 +253,14 @@ def upload_csv():
         imported_count = 0
         errors = []
         
+        # Track existing VS to prevent duplicates - GLOBAL for both file types
+        existing_vs = set()
+        for t in transactions:
+            if t.get('var_symbol'):
+                existing_vs.add(str(t.get('var_symbol')).strip())
+        
+        duplicates = []
+        
         if 'prijate' in request.files:
             file = request.files['prijate']
             if file.filename:
@@ -275,13 +283,8 @@ def upload_csv():
                     if len(df) > 0:
                         print(f"První řádek: {df.iloc[0].tolist()}")
                     
-                    # Track existing VS to prevent duplicates
-                    existing_vs = set()
-                    for t in transactions:
-                        if t.get('var_symbol'):
-                            existing_vs.add(str(t.get('var_symbol')).strip())
-                    
-                    duplicates = []
+                    # existing_vs and duplicates initialized above
+
 
 
                     for idx, row in df.iterrows():
@@ -420,6 +423,9 @@ def upload_csv():
 
                 log_audit("upload_file", {"type": "prijate", "filename": file.filename, "imported": imported_count})
             
+            # Reset duplicates for next file
+            duplicates = []
+            
         if 'vydane' in request.files:
             file = request.files['vydane']
             if file.filename:
@@ -453,6 +459,11 @@ def upload_csv():
                             amount_val = row.get('Celkem bez záloh [Kč]') or row.iloc[4] if len(row) > 4 else None
                             desc_val = str(row.get('Popis') or row.iloc[5]) if len(row) > 5 and pd.notna(row.get('Popis') or row.iloc[5]) else ""
                             
+                            # DUPLICATE CHECK
+                            if var_symbol and var_symbol in existing_vs:
+                                duplicates.append(var_symbol)
+                                continue
+
                             # Payment status is always 'zaplaceno' for issued invoices (income)
                             payment_status = 'zaplaceno'
                             
@@ -495,6 +506,8 @@ def upload_csv():
                                     "modified_at": None,
                                     "original_due_date": date_str
                                 })
+                                if var_symbol:
+                                    existing_vs.add(var_symbol)
                                 imported_count += 1
                             else:
                                 if idx < 3:  # Log first few skipped rows
@@ -509,6 +522,10 @@ def upload_csv():
                     print(f"Import Error Vydane: {e}")
                 
                 log_audit("upload_file", {"type": "vydane", "filename": file.filename, "imported": imported_count})
+
+                if duplicates:
+                     print(f"Skipped {len(duplicates)} duplicates in Vydane: {duplicates}")
+                     duplicates_summary.append(f"Vydané: Přeskočeno {len(duplicates)} duplicit (VS: {', '.join(duplicates[:3])}...)")
         
         # Save updated transactions to DATABASE
         save_transactions(transactions)
