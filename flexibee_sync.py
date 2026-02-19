@@ -520,24 +520,25 @@ class FlexiBeeConnector:
 
         # Save changes
         if updated_transactions:
-            # Update local list
-            final_list = []
-            updated_ids = {t['id'] for t in updated_transactions}
-            
-            # Keep unmodified transactions
-            for t in existing_transactions:
-                if t['id'] not in updated_ids:
-                    final_list.append(t)
-            
-            # Add updated/new transactions
-            final_list.extend(updated_transactions)
-            
+            if is_initial_sync:
+                # Initial sync: keep non-FlexiBee records (manual entries, Excel imports)
+                # and replace ALL FlexiBee records with the fresh data
+                non_flexibee = [t for t in existing_transactions
+                                if not t.get('source_file', '').startswith('flexibee:')]
+                final_list = non_flexibee + updated_transactions
+                print(f"Initial sync: kept {len(non_flexibee)} non-FlexiBee records, added {len(updated_transactions)} FlexiBee records")
+            else:
+                # Incremental sync: merge — keep all existing, update/add changed records
+                updated_ids = {t['id'] for t in updated_transactions}
+                final_list = [t for t in existing_transactions if t['id'] not in updated_ids]
+                final_list.extend(updated_transactions)
+
             save_transactions(final_list)
-            
+
             # Update last_sync only if successful
             self.config['last_sync'] = now.strftime('%Y-%m-%dT%H:%M:%S')
             self.save_config(self.config)
-            
+
         return {
             "status": "success",
             "invoices_issued": new_invoices_issued,

@@ -1108,6 +1108,13 @@ def flexibee_config():
             return jsonify(config)
         else:
             data = request.json
+            # If import_from_date changed, reset last_sync so next sync uses the new date
+            old_config = connector.load_config()
+            old_date = old_config.get('import_from_date', '')
+            new_date = data.get('import_from_date', '')
+            if new_date and new_date != old_date:
+                data['last_sync'] = ''
+                print(f"import_from_date changed ({old_date} -> {new_date}), resetting last_sync")
             connector.save_config(data)
             log_audit("update_flexibee_config", {"by": session.get('username')})
             
@@ -1123,7 +1130,10 @@ def flexibee_config():
                     flexibee_job = None
                     print("FlexiBee sync disabled.")
             
-            return jsonify({"status": "success", "message": "Konfigurace uložena"})
+            msg = "Konfigurace uložena"
+            if new_date and new_date != old_date:
+                msg += ". Datum importu změněno — příští synchronizace stáhne vše od nového data."
+            return jsonify({"status": "success", "message": msg})
     except Exception as e:
         import traceback
         error_details = traceback.format_exc()
