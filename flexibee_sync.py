@@ -421,12 +421,17 @@ class FlexiBeeConnector:
         }
 
         # NOTE: FlexiBee WQL only supports 'gt' and 'lt' (NOT 'ge'/'gte'/'le'/'lte')
+        # For import_from_date filtering we use datSplat (invoice due date) NOT lastUpdate,
+        # because an old 2024 invoice can have a recent lastUpdate (e.g. payment status changed).
+        # datSplat gt '2025-12-31' correctly returns only invoices due from 2026-01-01 onwards.
         if is_initial_sync:
             if import_from_date:
                 try:
+                    # Subtract 1 day so 'gt' behaves like '>=' for the given date
                     from_dt = datetime.strptime(import_from_date, '%Y-%m-%d') - timedelta(days=1)
-                    filter_str = f"(lastUpdate gt '{from_dt.strftime('%Y-%m-%dT%H:%M:%S')}')"
-                    print(f"Initial sync filter (import_from_date): {filter_str}")
+                    filter_date = from_dt.strftime('%Y-%m-%d')
+                    filter_str = f"(datSplat gt '{filter_date}')"
+                    print(f"Initial sync filter by datSplat: {filter_str}")
                 except Exception:
                     filter_str = ""
                     print("Initial sync: no filter (import all)")
