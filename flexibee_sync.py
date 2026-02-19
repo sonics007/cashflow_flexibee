@@ -267,7 +267,7 @@ class FlexiBeeConnector:
         
         Args:
             resource: API resource (e.g., 'faktura-vydana')
-            filter_str: Filter string for the query
+            filter_str: Filter string for the query (empty string = no filter)
             params: Query parameters
             max_retries: Maximum retry attempts per request
         
@@ -283,7 +283,12 @@ class FlexiBeeConnector:
             paginated_params['start'] = start
             paginated_params['limit'] = self.page_size
             
-            url = self.get_url(f'{resource}/{filter_str}.json')
+            if filter_str:
+                url = self.get_url(f'{resource}/{filter_str}.json')
+            else:
+                url = self.get_url(f'{resource}.json')
+            
+            print(f"  Fetching: {url} (start={start})")
             
             def make_request(timeout=30):
                 # Rate limiting
@@ -298,6 +303,7 @@ class FlexiBeeConnector:
                         verify=False,
                         timeout=timeout
                     )
+                    print(f"  HTTP {resp.status_code} - {len(resp.content)} bytes")
                     resp.raise_for_status()
                     flexibee_adaptive_delay.on_success()
                     return resp
@@ -308,6 +314,7 @@ class FlexiBeeConnector:
             try:
                 resp = RetryHandler.retry_request(make_request, max_retries=max_retries, timeout=30)
                 data = resp.json().get('winstrom', {}).get(resource, [])
+                print(f"  Got {len(data)} records from {resource}")
                 
                 if not data:
                     # No more data
@@ -327,6 +334,7 @@ class FlexiBeeConnector:
                 raise e
         
         return all_data
+
 
     def sync_invoices(self):
         """
@@ -418,13 +426,14 @@ class FlexiBeeConnector:
         # FlexiBee filter:
         # - Initial sync: filter by due date (datSplat) so old invoices are found
         # - Incremental sync: filter by lastUpdate to get only changed records
+        # NOTE: FlexiBee uses 'ge' (>=) and 'gt' (>) not 'gte'/'lte'
         params = {
             'detail': 'custom:id,code,datSplat,sumCelkem,firma,varSym,popis,lastUpdate,uhrazeno',
         }
 
         if is_initial_sync:
-            # Use datSplat (due date) for initial import - this finds invoices by their date
-            filter_str = f"(datSplat gte '{start_date}')"
+            # Use datSplat (due date) for initial import - finds all invoices by due date
+            filter_str = f"(datSplat ge '{start_date}')"
             print(f"Initial sync filter: {filter_str}")
         else:
             # Use lastUpdate for incremental sync - only changed records since last sync

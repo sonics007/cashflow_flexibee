@@ -1155,11 +1155,33 @@ def flexibee_sync_endpoint():
     try:
         from flexibee_sync import FlexiBeeConnector
         connector = FlexiBeeConnector()
+        
+        # Support force=true to reset last_sync before syncing
+        data = request.get_json(silent=True) or {}
+        if data.get('force') or request.args.get('force') == 'true':
+            connector.config['last_sync'] = ''
+            connector.save_config(connector.config)
+            print("Force sync: last_sync reset")
+        
         result = connector.sync_invoices()
         log_audit("flexibee_sync_manual", result)
         return jsonify({"status": "success", "details": result})
     except Exception as e:
         print(e)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/flexibee/reset_sync', methods=['POST'])
+@login_required
+def flexibee_reset_sync():
+    """Reset last_sync timestamp so next sync reimports all invoices"""
+    try:
+        from flexibee_sync import FlexiBeeConnector
+        connector = FlexiBeeConnector()
+        connector.config['last_sync'] = ''
+        connector.save_config(connector.config)
+        log_audit("flexibee_reset_sync", {"by": session.get('username')})
+        return jsonify({"status": "success", "message": "Sync reset. Další synchronizace stáhne vše od nastaveného data."})
+    except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
 # Scheduler job wrapper
