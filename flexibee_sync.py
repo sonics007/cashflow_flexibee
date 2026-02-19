@@ -424,22 +424,35 @@ class FlexiBeeConnector:
             print(f"Smart sync from last sync: {start_date}")
 
         # FlexiBee filter:
-        # - Initial sync: filter by due date (datSplat) so old invoices are found
-        # - Incremental sync: filter by lastUpdate to get only changed records
-        # NOTE: FlexiBee uses 'ge' (>=) and 'gt' (>) not 'gte'/'lte'
+        # NOTE: FlexiBee WQL only supports 'gt' and 'lt' operators (NOT 'ge'/'le'/'gte'/'lte')
+        # For initial sync: no filter OR filter by lastUpdate with very old date
+        # For incremental sync: use lastUpdate gt 'last_sync' for only changed records
         params = {
             'detail': 'custom:id,code,datSplat,sumCelkem,firma,varSym,popis,lastUpdate,uhrazeno',
         }
 
         if is_initial_sync:
-            # Use datSplat (due date) for initial import - finds all invoices by due date
-            filter_str = f"(datSplat ge '{start_date}')"
-            print(f"Initial sync filter: {filter_str}")
+            # For initial import: if import_from_date is set, use it as lastUpdate baseline
+            # Otherwise fetch everything (no filter)
+            if import_from_date:
+                try:
+                    from datetime import timedelta as td
+                    from_dt = datetime.strptime(import_from_date, '%Y-%m-%d') - td(days=1)
+                    filter_date = from_dt.strftime('%Y-%m-%dT%H:%M:%S')
+                    filter_str = f"(lastUpdate gt '{filter_date}')"
+                    print(f"Initial sync filter (from import_from_date): {filter_str}")
+                except Exception:
+                    filter_str = ""
+                    print("Initial sync: no filter (import all)")
+            else:
+                # No import_from_date set - import everything
+                filter_str = ""
+                print("Initial sync: no filter (import all invoices)")
         else:
-            # Use lastUpdate for incremental sync - only changed records since last sync
+            # Incremental: only records changed since last sync
             filter_str = f"(lastUpdate gt '{start_date}')"
             print(f"Incremental sync filter: {filter_str}")
-        
+
         new_invoices_issued = 0
         new_invoices_received = 0
         
