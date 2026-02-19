@@ -138,15 +138,21 @@ function renderExcelView() {
     const dailyStatus = lastData.daily_status;
     const sortedDates = Object.keys(dailyStatus).sort();
 
-    sortedDates.forEach(dateStr => {
+    // Filter to show only selected month/year
+    const filteredDates = sortedDates.filter(dateStr => {
+        const [y, m] = dateStr.split('-').map(Number);
+        return y === currentYear && (m - 1) === currentMonth;
+    });
+
+    filteredDates.forEach(dateStr => {
         const dayData = dailyStatus[dateStr];
         const income = dayData.income || 0;
         const expense = dayData.expense || 0;
         const dailyChange = income - expense;
         const balance = dayData.balance || 0;
 
-        // Show only days with EXPENSES (received invoices)
-        if (expense === 0) return;
+        // Show days with any transactions (income OR expense)
+        if (income === 0 && expense === 0) return;
 
         const tr = document.createElement('tr');
         tr.style.cssText = 'border-bottom: 1px solid #333; transition: background 0.2s; cursor: pointer;';
