@@ -394,31 +394,42 @@ class FlexiBeeConnector:
         now = datetime.now()
         
         # Determine start date for sync
-        if not last_sync:
+        is_initial_sync = not last_sync  # True if this is the first/fresh sync
+
+        if is_initial_sync:
             # First sync - use import_from_date if set, otherwise 365 days
             if import_from_date:
                 try:
                     # Parse YYYY-MM-DD to datetime
                     from_date = datetime.strptime(import_from_date, '%Y-%m-%d')
-                    start_date = from_date.strftime('%Y-%m-%dT%H:%M:%S')
+                    start_date = from_date.strftime('%Y-%m-%d')
                     print(f"Full sync initialized from configured date: {start_date}")
                 except:
                     # If parsing fails, fall back to 365 days
-                    start_date = (now - timedelta(days=365)).strftime('%Y-%m-%dT%H:%M:%S')
+                    start_date = (now - timedelta(days=365)).strftime('%Y-%m-%d')
                     print(f"Full sync initialized from default (365 days): {start_date}")
             else:
-                start_date = (now - timedelta(days=365)).strftime('%Y-%m-%dT%H:%M:%S')
+                start_date = (now - timedelta(days=365)).strftime('%Y-%m-%d')
                 print(f"Full sync initialized from default (365 days): {start_date}")
         else:
             start_date = last_sync
             print(f"Smart sync from last sync: {start_date}")
 
-        # FlexiBee filter for incremental sync
+        # FlexiBee filter:
+        # - Initial sync: filter by due date (datSplat) so old invoices are found
+        # - Incremental sync: filter by lastUpdate to get only changed records
         params = {
             'detail': 'custom:id,code,datSplat,sumCelkem,firma,varSym,popis,lastUpdate,uhrazeno',
         }
-        
-        filter_str = f"(lastUpdate gt '{start_date}')"
+
+        if is_initial_sync:
+            # Use datSplat (due date) for initial import - this finds invoices by their date
+            filter_str = f"(datSplat gte '{start_date}')"
+            print(f"Initial sync filter: {filter_str}")
+        else:
+            # Use lastUpdate for incremental sync - only changed records since last sync
+            filter_str = f"(lastUpdate gt '{start_date}')"
+            print(f"Incremental sync filter: {filter_str}")
         
         new_invoices_issued = 0
         new_invoices_received = 0
