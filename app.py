@@ -1166,14 +1166,20 @@ def flexibee_sync_endpoint():
         from flexibee_sync import FlexiBeeConnector
         connector = FlexiBeeConnector()
         
-        # Support force=true to reset last_sync before syncing
         data = request.get_json(silent=True) or {}
+        
+        # Support force=true to reset last_sync before syncing
         if data.get('force') or request.args.get('force') == 'true':
             connector.config['last_sync'] = ''
             connector.save_config(connector.config)
             print("Force sync: last_sync reset")
         
-        result = connector.sync_invoices()
+        # Read import_from_date from request body (sent directly from UI field)
+        import_from_date_override = data.get('import_from_date', '').strip() or None
+        if import_from_date_override:
+            print(f"Sync with import_from_date override from UI: {import_from_date_override}")
+        
+        result = connector.sync_invoices(import_from_date_override=import_from_date_override)
         log_audit("flexibee_sync_manual", result)
         return jsonify({"status": "success", "details": result})
     except Exception as e:

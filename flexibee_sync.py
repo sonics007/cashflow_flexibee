@@ -337,7 +337,7 @@ class FlexiBeeConnector:
         return all_data
 
 
-    def sync_invoices(self):
+    def sync_invoices(self, import_from_date_override=None):
         """
         Synchronize issued and received invoices.
         Smart Sync: Only fetches records changed since last_sync.
@@ -399,7 +399,12 @@ class FlexiBeeConnector:
             pass
 
         last_sync = self.config.get('last_sync', '')
-        import_from_date = self.config.get('import_from_date', '')
+        # import_from_date: use override from request, fallback to config
+        import_from_date = import_from_date_override or self.config.get('import_from_date', '')
+        if import_from_date_override:
+            print(f"Using import_from_date from request: {import_from_date}")
+        elif import_from_date:
+            print(f"Using import_from_date from config: {import_from_date}")
         now = datetime.now()
 
         from db_wrapper import save_transactions, load_transactions

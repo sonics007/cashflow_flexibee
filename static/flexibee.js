@@ -120,8 +120,13 @@ async function runFlexiBeeSync() {
     log.textContent = 'Spouštím synchronizaci...\n';
 
     try {
+        // Send current import_from_date from UI with the sync request
+        const importFromDate = document.getElementById('fb-import-from-date')?.value || '';
+
         const res = await fetch('/api/flexibee/sync', {
-            method: 'POST'
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ import_from_date: importFromDate })
         });
 
         const data = await res.json();
