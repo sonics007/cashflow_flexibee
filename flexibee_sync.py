@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import uuid
 from datetime import datetime, timedelta
 import urllib3
 import time
@@ -397,70 +398,50 @@ class FlexiBeeConnector:
             # If not explicitly enabled, do nothing (unless forced manually)
             pass
 
-        last_sync = self.config.get('last_sync')
-        import_from_date = self.config.get('import_from_date')
+        last_sync = self.config.get('last_sync', '')
+        import_from_date = self.config.get('import_from_date', '')
         now = datetime.now()
-        
-        # Determine start date for sync
-        is_initial_sync = not last_sync  # True if this is the first/fresh sync
 
-        if is_initial_sync:
-            # First sync - use import_from_date if set, otherwise 365 days
-            if import_from_date:
-                try:
-                    # Parse YYYY-MM-DD to datetime
-                    from_date = datetime.strptime(import_from_date, '%Y-%m-%d')
-                    start_date = from_date.strftime('%Y-%m-%d')
-                    print(f"Full sync initialized from configured date: {start_date}")
-                except:
-                    # If parsing fails, fall back to 365 days
-                    start_date = (now - timedelta(days=365)).strftime('%Y-%m-%d')
-                    print(f"Full sync initialized from default (365 days): {start_date}")
-            else:
-                start_date = (now - timedelta(days=365)).strftime('%Y-%m-%d')
-                print(f"Full sync initialized from default (365 days): {start_date}")
-        else:
-            start_date = last_sync
-            print(f"Smart sync from last sync: {start_date}")
+        from db_wrapper import save_transactions, load_transactions
+        import uuid
 
-        # FlexiBee filter:
-        # NOTE: FlexiBee WQL only supports 'gt' and 'lt' operators (NOT 'ge'/'le'/'gte'/'lte')
-        # For initial sync: no filter OR filter by lastUpdate with very old date
-        # For incremental sync: use lastUpdate gt 'last_sync' for only changed records
+        existing_transactions = load_transactions()
+
+        # Check how many FlexiBee records we already have
+        flexibee_count = sum(1 for t in existing_transactions if t.get('source_file', '').startswith('flexibee:'))
+        print(f"Existing FlexiBee records in DB: {flexibee_count}")
+
+        # Force full sync if no FlexiBee records exist in DB (regardless of last_sync)
+        is_initial_sync = (not last_sync) or (flexibee_count == 0)
+        if flexibee_count == 0 and last_sync:
+            print("DB has no FlexiBee records despite last_sync being set — forcing full sync")
+
         params = {
             'detail': 'custom:id,code,datSplat,sumCelkem,firma,varSym,popis,lastUpdate,uhrazeno',
         }
 
+        # NOTE: FlexiBee WQL only supports 'gt' and 'lt' (NOT 'ge'/'gte'/'le'/'lte')
         if is_initial_sync:
-            # For initial import: if import_from_date is set, use it as lastUpdate baseline
-            # Otherwise fetch everything (no filter)
             if import_from_date:
                 try:
-                    from datetime import timedelta as td
-                    from_dt = datetime.strptime(import_from_date, '%Y-%m-%d') - td(days=1)
-                    filter_date = from_dt.strftime('%Y-%m-%dT%H:%M:%S')
-                    filter_str = f"(lastUpdate gt '{filter_date}')"
-                    print(f"Initial sync filter (from import_from_date): {filter_str}")
+                    from_dt = datetime.strptime(import_from_date, '%Y-%m-%d') - timedelta(days=1)
+                    filter_str = f"(lastUpdate gt '{from_dt.strftime('%Y-%m-%dT%H:%M:%S')}')"
+                    print(f"Initial sync filter (import_from_date): {filter_str}")
                 except Exception:
                     filter_str = ""
                     print("Initial sync: no filter (import all)")
             else:
-                # No import_from_date set - import everything
+                # No date restriction — import ALL invoices from FlexiBee
                 filter_str = ""
                 print("Initial sync: no filter (import all invoices)")
         else:
-            # Incremental: only records changed since last sync
-            filter_str = f"(lastUpdate gt '{start_date}')"
+            filter_str = f"(lastUpdate gt '{last_sync}')"
             print(f"Incremental sync filter: {filter_str}")
 
         new_invoices_issued = 0
         new_invoices_received = 0
-        
-        from db_wrapper import save_transactions, load_transactions
-        import uuid
-        
-        existing_transactions = load_transactions()
-        # Create a map of existing transactions by remote ID (stored in source_file as 'flexibee:CODE')
+
+        # Create a map of existing FlexiBee transactions by remote code
         existing_map = {}
         for t in existing_transactions:
             src = t.get('source_file', '')
