@@ -1178,7 +1178,31 @@ def flexibee_sync_endpoint():
         return jsonify({"status": "success", "details": result})
     except Exception as e:
         print(e)
+        import traceback; traceback.print_exc()
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/flexibee/debug', methods=['GET'])
+@login_required
+def flexibee_debug():
+    """Debug endpoint - shows what the server currently has"""
+    try:
+        from flexibee_sync import FlexiBeeConnector
+        from db_wrapper import load_transactions
+        connector = FlexiBeeConnector()
+        config = connector.config.copy()
+        config.pop('password', None)
+        transactions = load_transactions()
+        flexibee_count = sum(1 for t in transactions if t.get('source_file','').startswith('flexibee:'))
+        dates = sorted([t['date'] for t in transactions if t.get('source_file','').startswith('flexibee:') and t.get('date')])
+        return jsonify({
+            "config": config,
+            "total_transactions": len(transactions),
+            "flexibee_transactions": flexibee_count,
+            "earliest_flexibee_date": dates[0] if dates else None,
+            "latest_flexibee_date": dates[-1] if dates else None,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/flexibee/reset_sync', methods=['POST'])
 @login_required
