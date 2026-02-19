@@ -456,6 +456,16 @@ class FlexiBeeConnector:
 
         updated_transactions = []
 
+        # Python-side date gate: skip any invoice before import_from_date regardless of URL filter
+        # This is a guaranteed safety net even if last_sync causes incremental filter to bypass datSplat
+        min_date = None
+        if import_from_date:
+            try:
+                min_date = datetime.strptime(import_from_date, '%Y-%m-%d').date()
+                print(f"Python-side date gate: skip invoices with datSplat < {min_date}")
+            except Exception:
+                pass
+
         # 1. Issued Invoices (Faktura Vydaná) -> Income
         try:
             print("Syncing issued invoices...")
@@ -473,6 +483,19 @@ class FlexiBeeConnector:
                 
                 # Map fields
                 t['date'] = parse_flexibee_date(inv.get('datSplat', ''))  # Due date
+
+                # Python-side date gate: skip invoices before import_from_date
+                if min_date and t['date']:
+                    try:
+                        inv_date = datetime.strptime(t['date'], '%Y-%m-%d').date()
+                        if inv_date < min_date:
+                            # Revert counter if was new
+                            if remote_id not in existing_map:
+                                new_invoices_issued -= 1
+                            continue
+                    except Exception:
+                        pass
+
                 t['amount'] = float(inv.get('sumCelkem', 0)) # Positive for income
                 t['type'] = 'Příjem'
                 firma_raw = inv.get('firma', {}).get('showAs', '') if isinstance(inv.get('firma'), dict) else str(inv.get('firma', ''))
@@ -482,7 +505,7 @@ class FlexiBeeConnector:
                 t['description'] = inv.get('popis', f"Faktura {code}")
                 t['payment_status'] = 'zaplaceno' if inv.get('uhrazeno', 0) else 'nezaplaceno'
                 t['source_file'] = remote_id
-                
+
                 updated_transactions.append(t)
                 
         except Exception as e:
@@ -505,9 +528,20 @@ class FlexiBeeConnector:
                 
                 # Map fields
                 t['date'] = parse_flexibee_date(inv.get('datSplat', ''))
+
+                # Python-side date gate: skip invoices before import_from_date
+                if min_date and t['date']:
+                    try:
+                        inv_date = datetime.strptime(t['date'], '%Y-%m-%d').date()
+                        if inv_date < min_date:
+                            if remote_id not in existing_map:
+                                new_invoices_received -= 1
+                            continue
+                    except Exception:
+                        pass
+
                 amount = float(inv.get('sumCelkem', 0))
                 t['amount'] = -abs(amount)
-                
                 t['type'] = 'Výdaj'
                 t['customer'] = ''
                 firma_raw = inv.get('firma', {}).get('showAs', '') if isinstance(inv.get('firma'), dict) else str(inv.get('firma', ''))
@@ -516,7 +550,7 @@ class FlexiBeeConnector:
                 t['description'] = inv.get('popis', f"Faktura {code}")
                 t['payment_status'] = 'zaplaceno' if inv.get('uhrazeno', 0) else 'nezaplaceno'
                 t['source_file'] = remote_id
-                
+
                 updated_transactions.append(t)
                 
         except Exception as e:
