@@ -12,21 +12,24 @@ def load_transactions():
     cursor.execute("SELECT * FROM transactions ORDER BY date")
     transactions = []
     for row in cursor.fetchall():
+        # Use dict-style access (row_factory = sqlite3.Row)
+        t = dict(row)
         transactions.append({
-            "id": row[0],
-            "date": row[1],
-            "type": row[2],
-            "amount": row[3],
-            "text": row[4] or "",
-            "supplier": row[5] or "",
-            "customer": row[6] or "",
-            "var_symbol": row[7] or "",
-            "description": row[8] or "",
-            "payment_status": row[9] or "",
-            "created_by": row[10],
-            "created_at": row[11],
-            "modified_at": row[12],
-            "original_due_date": row[13] if len(row) > 13 else row[1]
+            "id": t.get("id"),
+            "date": t.get("date"),
+            "type": t.get("type"),
+            "amount": t.get("amount"),
+            "text": t.get("text") or "",
+            "supplier": t.get("supplier") or "",
+            "customer": t.get("customer") or "",
+            "var_symbol": t.get("var_symbol") or "",
+            "description": t.get("description") or "",
+            "payment_status": t.get("payment_status") or "",
+            "created_by": t.get("created_by"),
+            "created_at": t.get("created_at"),
+            "modified_at": t.get("modified_at"),
+            "original_due_date": t.get("original_due_date") or t.get("date"),
+            "source_file": t.get("source_file") or ""
         })
     conn.close()
     return transactions
@@ -44,8 +47,8 @@ def save_transactions(transactions):
         cursor.execute('''
             INSERT INTO transactions 
             (id, date, type, amount, text, supplier, customer, var_symbol, 
-             description, payment_status, created_by, created_at, modified_at, original_due_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             description, payment_status, created_by, created_at, modified_at, original_due_date, source_file)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             t.get('id'),
             t.get('date'),
@@ -60,7 +63,8 @@ def save_transactions(transactions):
             t.get('created_by'),
             t.get('created_at'),
             t.get('modified_at'),
-            t.get('original_due_date')
+            t.get('original_due_date'),
+            t.get('source_file', '')
         ))
     
     conn.commit()

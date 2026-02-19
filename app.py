@@ -861,6 +861,17 @@ def reset_db():
         # Reset balance
         set_initial_balance(0)
         
+        # Reset FlexiBee last_sync so next sync reimports everything
+        try:
+            from flexibee_sync import FlexiBeeConnector
+            connector = FlexiBeeConnector()
+            if connector.config:
+                connector.config['last_sync'] = ''
+                connector.save_config(connector.config)
+                print("FlexiBee last_sync reset after DB clear")
+        except Exception as fe:
+            print(f"Could not reset FlexiBee last_sync: {fe}")
+        
         log_audit("reset_db", {"by": session.get('username')})
         return jsonify({"status": "success"})
     except Exception as e:

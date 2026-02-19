@@ -41,7 +41,8 @@ def init_db():
             created_by TEXT,
             created_at TEXT,
             modified_at TEXT,
-            original_due_date TEXT
+            original_due_date TEXT,
+            source_file TEXT
         )
     ''')
     
@@ -51,6 +52,13 @@ def init_db():
     except sqlite3.OperationalError:
         cursor.execute("ALTER TABLE transactions ADD COLUMN original_due_date TEXT")
         print("Migrated DB: Added original_due_date column")
+    
+    # Migration: Add source_file if missing
+    try:
+        cursor.execute("SELECT source_file FROM transactions LIMIT 1")
+    except sqlite3.OperationalError:
+        cursor.execute("ALTER TABLE transactions ADD COLUMN source_file TEXT")
+        print("Migrated DB: Added source_file column")
     
     # Settings table
     cursor.execute('''
