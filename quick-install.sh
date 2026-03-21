@@ -161,7 +161,7 @@ echo -e "${BLUE}=========================================="
 echo "  Step 4/7: Installing Python Packages"
 echo "==========================================${NC}"
 
-sudo -u $ACTUAL_USER bash -c "source venv/bin/activate && pip install --upgrade pip > /dev/null 2>&1 && pip install flask pandas openpyxl werkzeug cryptography schedule > /dev/null 2>&1"
+sudo -u $ACTUAL_USER bash -c "source venv/bin/activate && pip install --upgrade pip > /dev/null 2>&1 && pip install flask pandas openpyxl werkzeug cryptography schedule requests > /dev/null 2>&1"
 
 echo -e "${GREEN}✓ Python packages installed${NC}"
 
